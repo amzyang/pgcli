@@ -16,6 +16,7 @@ install_requirements = [
     "psycopg-binary >= 3.0.14; sys_platform == 'win32'",
     "sqlparse >=0.3.0,<0.6",
     "configobj >= 5.0.6",
+    "pendulum>=3.0.0b1",
     "cli_helpers[styles] >= 2.2.1",
 ]
 
