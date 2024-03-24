@@ -8,6 +8,7 @@ from prompt_toolkit.filters import (
     has_selection,
     vi_mode,
 )
+from prompt_toolkit.filters.cli import ViInsertMode
 
 from .pgbuffer import buffer_should_be_handled, safe_multi_line_mode
 
@@ -17,6 +18,7 @@ _logger = logging.getLogger(__name__)
 def pgcli_bindings(pgcli):
     """Custom key bindings for pgcli."""
     kb = KeyBindings()
+    insert_mode = ViInsertMode()
 
     tab_insert_text = " " * 4
 
