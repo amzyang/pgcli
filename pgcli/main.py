@@ -35,6 +35,7 @@ try:
 except ImportError:
     setproctitle = None
 from prompt_toolkit.completion import DynamicCompleter, ThreadedCompleter
+from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from prompt_toolkit.enums import DEFAULT_BUFFER, EditingMode
 from prompt_toolkit.shortcuts import PromptSession, CompleteStyle
 from prompt_toolkit.document import Document
@@ -1022,8 +1023,9 @@ class PGCli:
                 reserve_space_for_menu=self.min_num_menu_lines,
                 message=get_message,
                 prompt_continuation=get_continuation,
-                bottom_toolbar=get_toolbar_tokens if self.show_bottom_toolbar else None,
+                bottom_toolbar=None,
                 complete_style=complete_style,
+                cursor=ModalCursorShapeConfig(),
                 input_processors=[
                     # Highlight matching brackets while editing.
                     ConditionalProcessor(
