@@ -131,4 +131,24 @@ def pgcli_bindings(pgcli):
         """Move down in history."""
         event.current_buffer.history_forward(count=event.arg)
 
+    @kb.add("c-p", filter=insert_mode)
+    def _(event):
+        """Navigate completions or history in vi insert mode."""
+        b = event.current_buffer
+
+        if b.complete_state:
+            b.complete_previous()
+        else:
+            event.current_buffer.auto_up(count=event.arg)
+
+    @kb.add("c-n", filter=insert_mode)
+    def _(event):
+        """Navigate completions or history in vi insert mode."""
+        b = event.current_buffer
+
+        if b.complete_state:
+            b.complete_next()
+        else:
+            event.current_buffer.auto_down(count=event.arg)
+
     return kb
