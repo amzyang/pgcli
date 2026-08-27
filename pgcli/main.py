@@ -50,7 +50,6 @@ from prompt_toolkit.layout.processors import (
 )
 from prompt_toolkit.history import FileHistory
 from prompt_toolkit.auto_suggest import AutoSuggestFromHistory
-from prompt_toolkit.cursor_shapes import ModalCursorShapeConfig
 from pygments.lexers.sql import PostgresLexer
 
 from pgspecial.main import PGSpecial, NO_QUERY, PAGER_OFF, PAGER_LONG_OUTPUT
@@ -58,7 +57,6 @@ import pgspecial as special
 
 from . import auth
 from .pgcompleter import PGCompleter
-from .pgtoolbar import create_toolbar_tokens_func
 from .pgstyle import style_factory, style_factory_output
 from .pgexecute import PGExecute
 from .completion_refresher import CompletionRefresher
@@ -1143,8 +1141,6 @@ class PGCli:
         def get_continuation(width, line_number, is_soft_wrap):
             continuation = self.multiline_continuation_char * (width - 1) + " "
             return [("class:continuation", continuation)]
-
-        get_toolbar_tokens = create_toolbar_tokens_func(self)
 
         if self.wider_completion_menu:
             complete_style = CompleteStyle.MULTI_COLUMN
