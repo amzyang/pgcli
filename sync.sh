@@ -61,21 +61,18 @@ git push --force-with-lease; or exit 1
 # keep fork tags current, otherwise setuptools-scm versions the pip build off a stale tag
 git push origin --tags; or exit 1
 
-# converge pipx state: pgcli at HEAD with catppuccin injected
-set -l head_short (git rev-parse --short=9 HEAD)
+# converge uv tool state: pgcli at HEAD with catppuccin[pygments]
+# the version string drops the +g<sha> suffix when HEAD sits exactly on a tag, so compare the
+# commit recorded by the installer (PEP 610 direct_url.json) instead; -I keeps the repo's own
+# *.egg-info in the cwd from shadowing the installed distribution
+set -l installed_commit (~/.local/share/uv/tools/pgcli/bin/python -I -c "from importlib.metadata import distribution; import json; print(json.loads(distribution('pgcli').read_text('direct_url.json'))['vcs_info']['commit_id'])" 2>/dev/null)
 set -l spec 'pgcli @ git+https://github.com/amzyang/pgcli'
-set -l state (pipx list --json 2>/dev/null | python3 -c "import json,sys; m = json.load(sys.stdin)['venvs']['pgcli']['metadata']; print(m['main_package']['package_version']); print('yes' if 'catppuccin' in m['injected_packages'] else 'no')" 2>/dev/null)
-
-if test -z "$state[1]"
-    pipx install $spec; or exit 1
-else if string match -q "*+g$head_short*" -- "$state[1]"
-    echo "pgcli already at +g$head_short, skipping reinstall"
+if test "$installed_commit" = (git rev-parse HEAD)
+    echo "pgcli already at $installed_commit, skipping reinstall"
 else
-    pipx reinstall pgcli; or exit 1
-end
-
-if test "$state[2]" != yes
-    pipx inject pgcli 'catppuccin[pygments]'; or exit 1
+    # --reinstall implies --refresh, so the unpinned git ref is re-resolved to the pushed HEAD;
+    # --force lets a changed spec (extras / --with) replace the existing receipt instead of erroring
+    uv tool install --force --reinstall $spec --with 'catppuccin[pygments]'; or exit 1
 end
 
 # smoke: the installed CLI must survive its import chain end to end
